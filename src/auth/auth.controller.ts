@@ -1,4 +1,4 @@
-import { Controller,Post,Body,Get,UseGuards,Request } from '@nestjs/common';
+import { Controller, Post, Body, Get, UseGuards, Request } from '@nestjs/common';
 import { HeaderDto, SignInDTO, SignUpDTO } from './auth.dto';
 import { ValidationPipe } from './validation.pipe';
 import { AuthService } from './auth.service';
@@ -7,22 +7,23 @@ import { ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('auth')
 export class AuthController {
-    constructor(private authService:AuthService){}
+    constructor(private authService: AuthService) { }
 
     @Post('signUp')
-    signUp(@Body(new ValidationPipe) signUp:SignUpDTO){
-        return this.authService.signUp(signUp.name,signUp.password,signUp.email,signUp.imgUrl,signUp.userId)
+    signUp(@Body(new ValidationPipe) signUp: SignUpDTO) {
+        return this.authService.signUp(signUp.name, signUp.password, signUp.email, signUp.imgUrl, signUp.userId, signUp.providor)
+        // return signUp
     }
 
     @Post('signIn')
-    signIn(@Body(new ValidationPipe) signUp:SignInDTO){
-        return this.authService.signIn(signUp.email,signUp.password)
+    signIn(@Body(new ValidationPipe) signUp: SignInDTO) {
+        return this.authService.signIn(signUp.email, signUp.password)
     }
 
     @UseGuards(AuthGuard)
     @Get('profile')
     @ApiBearerAuth()
-    profile(@Request() req:HeaderDto){
+    profile(@Request() req: HeaderDto) {
         return req.user
     }
 }
