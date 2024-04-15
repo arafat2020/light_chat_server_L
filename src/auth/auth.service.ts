@@ -5,6 +5,7 @@ import { HttpStatus } from '@nestjs/common/enums';
 import { HttpException } from '@nestjs/common/exceptions';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
+import { ProvidorType } from '@prisma/client';
 
 
 
@@ -14,12 +15,12 @@ export class AuthService {
         private prisma: DbService,
         private lib: LibService,
         private jwt: JwtService,
-        private config:ConfigService
+        private config: ConfigService
     ) {
         this.prisma.init()
-     }
+    }
 
-    async signUp(name: string, password: string, email: string, imgUrl: string, userId: string,) {
+    async signUp(name: string, password: string, email: string, imgUrl: string, userId: string, providers: ProvidorType) {
         const img = await this.lib.cldUpload(imgUrl)
         const hasedPassword = await this.lib.getHashed(password)
         try {
@@ -30,14 +31,15 @@ export class AuthService {
                     email: email,
                     imageUrl: img.url,
                     name: name,
-                    userId: userId
+                    userId: userId,
+                    providor: providers
                 }
             })
             return {
                 newUser,
-                access_token: await this.jwt.signAsync(newUser,{
+                access_token: await this.jwt.signAsync(newUser, {
                     secret: this.config.get("JWT_SECRET"),
-                    expiresIn:'7d'
+                    expiresIn: '7d'
                 })
             }
         } catch (error) {
@@ -63,9 +65,9 @@ export class AuthService {
             await delete userObj.passward
             return {
                 userObj,
-                access_token: await this.jwt.signAsync(userObj,{
+                access_token: await this.jwt.signAsync(userObj, {
                     secret: this.config.get("JWT_SECRET"),
-                    expiresIn:'7d'
+                    expiresIn: '7d'
                 })
             }
         } catch (error) {

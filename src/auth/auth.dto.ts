@@ -1,5 +1,6 @@
 import { IsEmail, IsNotEmpty } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { ProvidorType } from '@prisma/client';
 
 
 
@@ -52,6 +53,17 @@ export class SignUpDTO {
         message: "Image Is required"
     })
     imgUrl: string
+
+    @ApiProperty({
+        description: 'The providor usese for authentication',
+        required: true,
+        default:ProvidorType.NATIVE
+    })
+    @IsNotEmpty({
+        message: "Image Is required"
+    })
+    providor: ProvidorType
+    
 }
 
 export class SignInDTO {
@@ -87,4 +99,3 @@ export class HeaderDto {
     user:object
   
   }
-
